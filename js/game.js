@@ -107,7 +107,7 @@
   let fruitTaken = {};        // fruit id -> true
   let slateTaken = {};        // slate id -> true
   let braziersLit = [];       // ordered ids
-  let dlg = null;             // active dialogue {name, lines, idx, onDone}
+  let dlg = null, lanternTier = 0;             // slate mastery brightens the lantern
   let near = null;            // interact target
   let slimes = [];
   let particles = Kit.particles();
@@ -121,7 +121,7 @@
   function saveGame() {
     Kit.store.set('ember.save', {
       quests, items, player: { x: player.x, y: player.y },
-      talked, fruitTaken, slateTaken, braziersLit, won
+      talked, fruitTaken, slateTaken, braziersLit, won, lanternTier
     });
   }
   function loadGame() {
@@ -134,6 +134,7 @@
     slateTaken = s.slateTaken || {};
     braziersLit = s.braziersLit || [];
     won = !!s.won;
+    lanternTier = s.lanternTier || 0;
     if (s.player) { player.x = s.player.x; player.y = s.player.y; }
     return true;
   }
@@ -239,7 +240,19 @@
         const card = Learn.nextCard();
         if (card) {
           Learn.show(card, { timer: 0, onOpen: () => { if (state !== 'dialogue') G.pause(); },
-            onClose: () => G.resume() }).then(ok => { if (ok) Kit.toast('Slate wisdom kept'); });
+            onClose: () => G.resume() }).then(ok => {
+            if (ok) {
+              if (lanternTier < 3) { lanternTier++; Kit.toast(`Lantern brightens (LV ${lanternTier})`); }
+              else Kit.toast('Slate wisdom kept — lantern at full burn');
+              Audio.sfx('powerup');
+              Mascot.react('questdone');
+            } else {
+              lanternTier = Math.max(0, lanternTier - 1);
+              Audio.sfx('fail');
+              Kit.toast('The lantern dims a little... read the slates again');
+              Mascot.react('fail');
+            }
+          });
         }
       }
       saveGame();
@@ -508,30 +521,35 @@
       }
     }
 
-    /* cottages */
+    /* cottages behind the player (painter's order; front pass follows the player) */
+    const feetY = pyOf(player.y) + 13;
     for (const hs of HOUSES) {
-      const hx = pxOf(hs.x), hy = pyOf(hs.y);
-      const hw = hs.w * TILE, hh = hs.h * TILE;
-      ctx.fillStyle = 'rgba(0,0,0,0.22)';
-      ctx.fillRect(hx + 5, hy + hh - 2, hw, 7);
-      /* wall */
-      ctx.fillStyle = '#D9C29A';
-      ctx.fillRect(hx + 4, hy + hh * 0.42, hw - 8, hh * 0.58);
-      /* roof */
-      ctx.fillStyle = '#B0603C';
-      ctx.beginPath();
-      ctx.moveTo(hx - 3, hy + hh * 0.45);
-      ctx.lineTo(hx + hw / 2, hy - 2);
-      ctx.lineTo(hx + hw + 3, hy + hh * 0.45);
-      ctx.closePath(); ctx.fill();
-      ctx.fillStyle = 'rgba(90,40,24,0.35)';
-      for (let i = 1; i < 4; i++) ctx.fillRect(hx - 3 + i * (hw + 6) / 4 - 1, hy + hh * 0.1, 2, hh * 0.34);
-      /* door + window */
-      ctx.fillStyle = '#7A5A3C';
-      ctx.fillRect(hx + hw / 2 - 6, hy + hh * 0.62, 12, hh * 0.38);
-      ctx.fillStyle = 'rgba(255,205,120,0.85)';
-      ctx.fillRect(hx + 10, hy + hh * 0.6, 9, 8);
+      if ((hs.y + hs.h) * TILE - cam.y <= feetY) drawCottage(hs);
     }
+
+  function drawCottage(hs) {
+    const hx = pxOf(hs.x), hy = pyOf(hs.y);
+    const hw = hs.w * TILE, hh = hs.h * TILE;
+    ctx.fillStyle = 'rgba(0,0,0,0.22)';
+    ctx.fillRect(hx + 5, hy + hh - 2, hw, 7);
+    /* wall */
+    ctx.fillStyle = '#D9C29A';
+    ctx.fillRect(hx + 4, hy + hh * 0.42, hw - 8, hh * 0.58);
+    /* roof */
+    ctx.fillStyle = '#B0603C';
+    ctx.beginPath();
+    ctx.moveTo(hx - 3, hy + hh * 0.45);
+    ctx.lineTo(hx + hw / 2, hy - 2);
+    ctx.lineTo(hx + hw + 3, hy + hh * 0.45);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = 'rgba(90,40,24,0.35)';
+    for (let i = 1; i < 4; i++) ctx.fillRect(hx - 3 + i * (hw + 6) / 4 - 1, hy + hh * 0.1, 2, hh * 0.34);
+    /* door + window */
+    ctx.fillStyle = '#7A5A3C';
+    ctx.fillRect(hx + hw / 2 - 6, hy + hh * 0.62, 12, hh * 0.38);
+    ctx.fillStyle = 'rgba(255,205,120,0.85)';
+    ctx.fillRect(hx + 10, hy + hh * 0.6, 9, 8);
+  }
 
     /* braziers */
     for (const b of BRAZIERS) {
@@ -583,6 +601,10 @@
     for (const n of NPCS) drawNPC(ctx, n, t);
     /* player */
     drawPlayer(ctx, t);
+    /* cottages in front of the player (roof overhangs) */
+    for (const hs of HOUSES) {
+      if ((hs.y + hs.h) * TILE - cam.y > feetY) drawCottage(hs);
+    }
     /* fireflies over the woods + village at "night" sides */
     for (const f of fireflies) {
       f.a += f.sp * 0.016;
@@ -596,7 +618,7 @@
     /* lantern mask in the cave */
     if (inCave(player.x, player.y)) {
       const px = pxOf(player.x), py = pyOf(player.y);
-      const r = 150 + Math.sin(t * 5) * 4;
+      const r = 150 + lanternTier * 45 + Math.sin(t * 5) * 4;
       const g2 = ctx.createRadialGradient(px, py, 30, px, py, r);
       g2.addColorStop(0, 'rgba(0,0,0,0)');
       g2.addColorStop(0.7, 'rgba(8,4,8,0.75)');
@@ -841,7 +863,7 @@
         player = { x: 7.5, y: 14.5, dir: 'down', moving: false, walkPhase: 0 };
         quests = { fruit: 'available', braziers: 'available', cave: 'locked' };
         items = { sunfruit: 0, lantern: false, charm: false, heart: false };
-        talked = {}; fruitTaken = {}; slateTaken = {}; braziersLit = []; won = false;
+        talked = {}; fruitTaken = {}; slateTaken = {}; braziersLit = []; won = false; lanternTier = 0;
       } else loadGame();
       initSlimes();
       state = 'roam';

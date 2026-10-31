@@ -12,7 +12,7 @@ Three quests, one save that lives on your device, and an isle that keeps your pr
 
 ## Data-slates: learn to work with AI
 
-Glowing slates are scattered across the isle. Each one opens a short lesson on working with AI assistants — how to ask well, why confident is not the same as correct, what least-privilege means for connected tools, why you verify a citation before you act on it. Wrong answers cost nothing; every slate you read is tracked in the menu's **Concepts** codex, and three correct reads masters a card.
+Glowing slates are scattered across the isle. Each one opens a short lesson on working with AI assistants — how to ask well, why confident is not the same as correct, what least-privilege means for connected tools, why you verify a citation before you act on it. Right answers **brighten your lantern** (up to LV3 — a wider circle of light in the cave); wrong answers dim it. Every slate you read is tracked in the menu's **Concepts** codex, and three correct reads masters a card.
 
 ## Controls
 
