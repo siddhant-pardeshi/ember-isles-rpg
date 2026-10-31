@@ -4,6 +4,8 @@
 
 [▶ Play Ember Isles](https://siddhant-pardeshi.github.io/ember-isles-rpg/) — free, no install, no login. Phones and desktops.
 
+![Ember Isles](docs/media/gameplay.gif)
+
 ## The pitch
 
 Emberwick village is five cottages, a well, and a lamplighter with a problem: the big lamp is dry and the night is greedy. East of the village the Whisper Woods hold glowing sunfruit and fireflies that mark the clearings. South, Harbor Point's beacons have gone cold and the ferries steer wide. And north-east, past the trees, the Ember Cave waits with its far chamber and its famous, impossible Heart.
@@ -49,6 +51,10 @@ One shared game kit, zero downloaded assets: a 40×30 hand-authored tile island 
 python -m http.server 8000
 # open http://localhost:8000
 ```
+
+## About
+
+**Made by Siddhant Pardeshi.** Part of [The Game Deck](https://siddhant-pardeshi.github.io/game-deck/) — six handcrafted worlds on one shared game kit, each with its own curriculum woven into the mechanics.
 
 ## License
 
