@@ -1,0 +1,39 @@
+/* Ember Isles theme — golden-hour warmth, seafoam water, ember accents */
+:root {
+  --acc: #FFB35C;
+  --acc2: #7FD8BE;
+  --ink: #F5EEE2;
+  --dim: #A9987F;
+  --bg: #141018;
+  --panel: rgba(22, 16, 22, .88);
+  --font: 'Trebuchet MS', 'Segoe UI', system-ui, sans-serif;
+}
+h1.title em { color: #FFB35C; }
+
+/* dialogue panel (bottom sheet, never over the player) */
+.dlg {
+  position: absolute; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+  transform: translate(-50%, 16px);
+  width: min(560px, calc(100vw - 28px));
+  background: rgba(20,14,16,0.94);
+  border: 1px solid color-mix(in srgb, var(--acc) 45%, transparent);
+  border-radius: 16px;
+  padding: 13px 16px 15px;
+  opacity: 0; pointer-events: none; cursor: pointer;
+  transition: opacity .22s ease, transform .22s cubic-bezier(.34,1.4,.64,1);
+  box-shadow: 0 16px 44px rgba(0,0,0,.5);
+  z-index: 5;
+}
+.dlg.on { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+.dlg b { color: var(--acc); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; display: block; margin-bottom: 5px; }
+.dlg p { margin: 0 0 6px; font-size: 14.5px; line-height: 1.55; color: var(--ink); }
+.dlg span { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--dim); }
+@media (max-width: 620px) {
+  .mascot-dock { bottom: calc(var(--sab) + 150px); }
+}
+
+/* the isle is dusk-lit: let it glow through the menu */
+[data-screen="menu"], [data-screen="pause"], [data-screen="results"] {
+  background: linear-gradient(180deg, rgba(16,10,14,.66), rgba(16,10,14,.5));
+  backdrop-filter: blur(2px);
+}
