@@ -37,6 +37,10 @@ The character in the corner is Momo — the isle's small enthusiastic guide. The
 
 Volume sliders and mute (`M`), quality tiers, reduced motion, hideable mascot, fullscreen, keyboard-playable menus, touch targets ≥ 44px, and a calm pace by design — nothing here is timed. Fully playable muted.
 
+## Privacy
+
+No accounts, no cookies, no analytics, no tracking — nothing leaves your device. Progress and settings live in your browser's localStorage and can be wiped anytime from Settings. Full details: [SECURITY.md](SECURITY.md) and the deck-wide [privacy statement](https://github.com/siddhant-pardeshi/game-deck/blob/main/PRIVACY.md).
+
 ## Under the hood
 
 One shared game kit, zero downloaded assets: a 40×30 hand-authored tile island rendered with canvas paths (swaying grass, shimmering water, fireflies, long shadows), dialogue with a typewriter, a real quest state machine, and a versioned local save. The soundtrack — warm triangle arps, and a darker pad variation underground — is synthesized live with WebAudio.
